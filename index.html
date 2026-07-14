@@ -4,10 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dein Name — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0f0f10;
-      --text: #f5f5f5;
+      --bg: #ffffff;
+      --text: #000000;
     }
 
     * {
@@ -23,12 +26,23 @@
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
       padding: 24px;
+      gap: 32px;
+    }
+
+    h1 {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-weight: 700;
+      font-size: 1.5rem;
+      letter-spacing: 0.01em;
+      color: var(--text);
+      text-transform: lowercase;
     }
 
     .container {
@@ -45,29 +59,10 @@
       height: auto;
       display: block;
       border-radius: 8px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-    }
-
-    /* Platzhalter-Styling — kann entfernt werden, sobald ein echtes Bild eingebunden ist */
-    .placeholder {
-      width: 100%;
-      max-width: 600px;
-      aspect-ratio: 4 / 5;
-      background: linear-gradient(135deg, #2a2a2d, #1a1a1c);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #6b6b6f;
-      font-size: 0.95rem;
-      letter-spacing: 0.02em;
-      text-align: center;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-      padding: 24px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
     }
 
     @media (max-width: 600px) {
-      .placeholder,
       .hero-image {
         max-width: 100%;
       }
@@ -76,13 +71,10 @@
 </head>
 <body>
 
+  <h1>in progress</h1>
+
   <div class="container">
-    <!-- PLATZHALTER: Sobald du ein Bild hast, ersetze diesen div-Block durch:
-         <img src="dein-bild.jpg" alt="Beschreibung" class="hero-image">
-    -->
-    <div class="placeholder">
-      Bild folgt<br>(Platzhalter)
-    </div>
+    <img src="pfo_rd.jpg" alt="Portfolio Bild" class="hero-image">
   </div>
 
 </body>
