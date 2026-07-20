@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#000000">
+<meta name="color-scheme" content="dark">
+<title>Portfolio — Loris Klinke</title>
+
+<!--
+  ANLEITUNG ZUM ANPASSEN
+  ----------------------
+  1. Bilder austauschen: Liegen im Ordner "images/" als project-1.jpg bis
+     project-4.jpg. Einfach eine Datei mit gleichem Namen ersetzen, oder im
+     "style"-Attribut des jeweiligen .media-Divs einen neuen Dateinamen
+     eintragen.
+  2. Texte anpassen: In jedem ".info"-Block <span class="tag">, <h2> (Titel)
+     und <p> (Beschreibung) ersetzen.
+  3. Anzahl Projekte ändern: Ein <section class="project">-Block kopieren
+     oder entfernen. Die Zähler (01/04 usw.) und der Progress-Rail rechts
+     aktualisieren sich automatisch über JavaScript — nichts von Hand pflegen.
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0a0a0a;
+    --ink: #f2f2ef;
+    --accent: #6b6bff;
+    --display-font: 'Roboto Mono', monospace;
+    --body-font: 'Roboto Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body-font);
+    overflow: hidden;
+  }
+
+  #stage {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  /* ---------- PROJECT SECTIONS ---------- */
+
+  .project {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.9s ease;
+    cursor: pointer;
+  }
+
+  .project.active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 2;
+  }
+
+  .media {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #050505;
+    overflow: hidden;
+  }
+
+  .scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 45%);
+    pointer-events: none;
+  }
+
+  /* ---------- TOP / COUNTER ---------- */
+
+  .counter {
+    position: absolute;
+    top: clamp(20px, 4vh, 40px);
+    right: clamp(20px, 5vw, 56px);
+    font-family: var(--body-font);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.85);
+    font-variant-numeric: tabular-nums;
+    z-index: 5;
+  }
+
+  .brand {
+    position: absolute;
+    top: clamp(20px, 4vh, 40px);
+    left: clamp(20px, 5vw, 56px);
+    font-family: var(--body-font);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+    z-index: 5;
+  }
+
+  /* ---------- INFO TEXT (scroll reveal) ---------- */
+
+  .info {
+    position: absolute;
+    left: clamp(20px, 5vw, 56px);
+    bottom: clamp(28px, 8vh, 80px);
+    max-width: 620px;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .info h2 {
+    font-family: var(--display-font);
+    font-weight: 600;
+    font-size: clamp(2.2rem, 6vw, 4.6rem);
+    color: #fff;
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+    opacity: 0;
+    transform: translateY(36px);
+    transition: transform 0.6s cubic-bezier(0.22,1,0.36,1), opacity 0.5s ease;
+    will-change: transform, opacity;
+  }
+
+  .info p {
+    margin-top: 18px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.85);
+    max-width: 46ch;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: transform 0.6s cubic-bezier(0.22,1,0.36,1) 0.05s, opacity 0.5s ease 0.05s;
+    will-change: transform, opacity;
+  }
+
+  .info .tag {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 10px;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: transform 0.5s cubic-bezier(0.22,1,0.36,1), opacity 0.4s ease;
+  }
+
+  .project.revealed .info .tag,
+  .project.revealed .info h2,
+  .project.revealed .info p {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ---------- PROGRESS RAIL (signature element) ---------- */
+
+  .rail {
+    position: absolute;
+    right: clamp(14px, 3vw, 28px);
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    z-index: 5;
+  }
+
+  .rail .tick {
+    width: 3px;
+    height: 34px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.25);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .rail .tick .fill {
+    position: absolute;
+    left: 0; top: 0; width: 100%;
+    height: 0%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: height 0.05s linear;
+  }
+
+  /* ---------- HINT ---------- */
+
+  .hint {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    z-index: 6;
+    transition: opacity 0.6s ease;
+    pointer-events: none;
+  }
+
+  .hint.hidden { opacity: 0; }
+
+  /* ---------- MOBILE ---------- */
+
+  @media (max-width: 768px) {
+    body { overflow: hidden; }
+
+    #stage {
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .project {
+      position: relative;
+      height: 100vh;
+      height: 100dvh;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .info {
+      pointer-events: none;
+      bottom: max(24px, env(safe-area-inset-bottom) + 20px);
+      max-width: calc(100% - 40px);
+    }
+
+    .info h2 {
+      font-size: clamp(1.8rem, 9vw, 2.8rem);
+    }
+
+    .info p {
+      font-size: 14px;
+      margin-top: 12px;
+    }
+
+    .rail { display: none; }
+
+    .hint { bottom: max(22px, env(safe-area-inset-bottom) + 18px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .project, .info h2, .info p, .info .tag { transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="stage">
+
+  <section class="project active">
+    <div class="media" style="background-image: url('images/project-1.jpg')">
+      <div class="scrim"></div>
+    </div>
+    <div class="brand">Loris Klinke</div>
+    <div class="counter">01 / 04</div>
+    <div class="info">
+      <span class="tag">Photography — 2024</span>
+      <h2>Meridian</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
+    </div>
+    <div class="rail"></div>
+  </section>
+
+  <section class="project">
+    <div class="media" style="background-image: url('images/project-2.jpg')">
+      <div class="scrim"></div>
+    </div>
+    <div class="brand">Loris Klinke</div>
+    <div class="counter">02 / 04</div>
+    <div class="info">
+      <span class="tag">Collage — 2024</span>
+      <h2>Fracture</h2>
+      <p>Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum.</p>
+    </div>
+    <div class="rail"></div>
+  </section>
+
+  <section class="project">
+    <div class="media" style="background-image: url('images/project-3.jpg')">
+      <div class="scrim"></div>
+    </div>
+    <div class="brand">Loris Klinke</div>
+    <div class="counter">03 / 04</div>
+    <div class="info">
+      <span class="tag">Print — 2023</span>
+      <h2>Artifact</h2>
+      <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus.</p>
+    </div>
+    <div class="rail"></div>
+  </section>
+
+  <section class="project">
+    <div class="media" style="background-image: url('images/project-4.jpg')">
+      <div class="scrim"></div>
+    </div>
+    <div class="brand">Loris Klinke</div>
+    <div class="counter">04 / 04</div>
+    <div class="info">
+      <span class="tag">Installation — 2023</span>
+      <h2>Assembly</h2>
+      <p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem.</p>
+    </div>
+    <div class="rail"></div>
+  </section>
+
+</div>
+
+<script>
+(function() {
+  const stage = document.getElementById('stage');
+  const projects = Array.from(document.querySelectorAll('.project'));
+  const total = projects.length;
+  let current = 0;
+  let reveal = 0; // 0..1, desktop scroll-reveal progress
+  let isMobile = window.matchMedia('(max-width: 768px)').matches;
+  let hintDismissed = false;
+
+  // build progress rail ticks (one rail per section, but only the visible one matters on desktop)
+  function buildRail(section) {
+    const rail = section.querySelector('.rail');
+    rail.innerHTML = '';
+    for (let i = 0; i < total; i++) {
+      const tick = document.createElement('div');
+      tick.className = 'tick';
+      const fill = document.createElement('div');
+      fill.className = 'fill';
+      tick.appendChild(fill);
+      rail.appendChild(tick);
+    }
+  }
+  projects.forEach(buildRail);
+
+  function updateRail(section, index, progress) {
+    const ticks = section.querySelectorAll('.rail .tick .fill');
+    ticks.forEach((fill, i) => {
+      if (i < index) fill.style.height = '100%';
+      else if (i === index) fill.style.height = (progress * 100) + '%';
+      else fill.style.height = '0%';
+    });
+  }
+
+  function applyReveal(section, revealed) {
+    section.classList.toggle('revealed', revealed);
+    updateRail(section, current, revealed ? 1 : 0);
+  }
+
+  function goTo(index) {
+    projects[current].classList.remove('active');
+    current = (index + total) % total;
+    reveal = 0;
+    const section = projects[current];
+    section.classList.add('active');
+    applyReveal(section, false);
+    dismissHint();
+  }
+
+  function dismissHint() {
+    if (hintDismissed) return;
+    hintDismissed = true;
+    const hint = document.querySelector('.hint');
+    if (hint) hint.classList.add('hidden');
+  }
+
+  // ---------- DESKTOP: click advances, wheel reveals text ----------
+
+  function onClick(e) {
+    if (isMobile) return;
+    goTo(current + 1);
+  }
+
+  function onWheel(e) {
+    if (isMobile) return;
+    e.preventDefault();
+    if (Math.abs(e.deltaY) < 2) return;
+    if (!projects[current].classList.contains('revealed')) {
+      applyReveal(projects[current], true);
+    }
+  }
+
+  function onKey(e) {
+    if (isMobile) return;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goTo(current + 1);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goTo(current - 1);
+  }
+
+  // ---------- MOBILE: swipe/scroll-snap navigates, tap toggles info ----------
+
+  let observer;
+
+  function onTap(section) {
+    return function(e) {
+      section.classList.toggle('revealed');
+      dismissHint();
+    };
+  }
+
+  function setupMobile() {
+    observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
+          const idx = projects.indexOf(entry.target);
+          current = idx;
+          document.querySelector('.hint') && null;
+        }
+      });
+    }, { threshold: [0.6] });
+
+    projects.forEach((p, i) => {
+      p.style.opacity = '';
+      p.style.visibility = '';
+      p.classList.remove('active');
+      observer.observe(p);
+      p.addEventListener('click', onTap(p));
+    });
+    projects[0].classList.add('active'); // harmless on mobile, kept for consistency
+  }
+
+  function teardownMobile() {
+    if (observer) { observer.disconnect(); observer = null; }
+    projects.forEach((p) => {
+      p.classList.remove('revealed');
+      p.replaceWith(p.cloneNode(true)); // strip tap listeners cleanly
+    });
+  }
+
+  function init() {
+    isMobile = window.matchMedia('(max-width: 768px)').matches;
+    if (isMobile) {
+      setupMobile();
+    } else {
+      stage.addEventListener('click', onClick);
+      stage.addEventListener('wheel', onWheel, { passive: false });
+      window.addEventListener('keydown', onKey);
+      applyReveal(projects[0], false);
+    }
+  }
+
+  // simple resize handling: reload layout mode if breakpoint crossed
+  let lastIsMobile = isMobile;
+  window.addEventListener('resize', () => {
+    const nowMobile = window.matchMedia('(max-width: 768px)').matches;
+    if (nowMobile !== lastIsMobile) {
+      location.reload();
+    }
+  });
+
+  init();
+
+  // add hint text
+  const hint = document.createElement('div');
+  hint.className = 'hint';
+  hint.textContent = isMobile ? 'Tap for details · Swipe to continue' : 'Scroll for details · Click to continue';
+  document.body.appendChild(hint);
+  setTimeout(() => { if (!hintDismissed) hint.style.opacity = '0.55'; }, 300);
+
+})();
+</script>
+
+</body>
+</html>
